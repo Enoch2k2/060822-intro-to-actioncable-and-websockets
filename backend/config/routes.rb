@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+
+  # setup actioncable server
+  mount ActionCable.server => "/cable"
+
   resources :messages, only: [:index, :create]
   # resources :users
 

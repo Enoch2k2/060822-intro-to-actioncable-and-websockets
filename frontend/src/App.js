@@ -7,6 +7,11 @@ import Login from './components/sessions/Login';
 import Signup from './components/sessions/Signup';
 import Home from './components/static/Home';
 
+// creates a new websocket and points to our Actioncable server
+const ws = new WebSocket("ws://localhost:3001/cable")
+
+
+
 const App = () => {
   const [user, setUser] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
@@ -23,6 +28,19 @@ const App = () => {
       })
   }, [])
   
+  ws.onopen = () => {
+    
+    console.log('connected to websocket server')
+    ws.send(
+      JSON.stringify({
+        command: "subscribe",
+        identifier: JSON.stringify({
+          id: user.id,
+          channel: "MessagesChannel"
+        })
+      })
+    )
+  }
 
   const loginUser = user => {
     setUser(user);
@@ -49,7 +67,7 @@ const App = () => {
       <Navbar loggedIn={ loggedIn } user={ user } logoutUser={ logoutUser } />
       <Errors errors={ errors } />
       <Routes>
-        <Route path="/" element={ loggedIn ? <Dashboard user={ user } /> : <Home /> } />
+        <Route path="/" element={ loggedIn ? <Dashboard user={ user } ws={ ws } /> : <Home /> } />
         <Route path="/login" element={ <Login setErrors={ setErrors } loginUser={ loginUser } /> } />
         <Route path="/signup" element={ <Signup setErrors={ setErrors } loginUser={ loginUser } /> } />
       </Routes>

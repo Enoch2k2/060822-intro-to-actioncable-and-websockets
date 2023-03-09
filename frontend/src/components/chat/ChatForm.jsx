@@ -15,7 +15,10 @@ const ChatForm = ({ addMessage, setIsTyping }) => {
       body: JSON.stringify({ content })
     })
       .then(resp => resp.json())
-      .then(data => addMessage(data))
+      .then(data => {
+        setContent("")
+        setIsTyping(false)
+      })
   }
 
   const handleKeyDown = e => {
